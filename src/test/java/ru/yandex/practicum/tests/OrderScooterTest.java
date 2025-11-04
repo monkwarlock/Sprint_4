@@ -34,9 +34,9 @@ public class OrderScooterTest {
         WebDriver driver = factory.getDriver();
         var mainPage = new MainPage(driver);
         OrderPage orderPage = mainPage.openOrderPage();
-        orderPage.fillOrderForm1(data);
+        orderPage.fillOrderFormFirstPage(data);
         orderPage.clickNextButton();
-        orderPage.fillOrderForm2(data);
+        orderPage.fillOrderFormSecondPage(data);
         orderPage.checkClickEndOrderButton();
         //В хроме не кликается кнопка да
     }
@@ -46,9 +46,9 @@ public class OrderScooterTest {
         WebDriver driver = factory.getDriver();
         var mainPage = new MainPage(driver);
         OrderPage orderPage = mainPage.clickOnBottomOrderButton();
-        orderPage.fillOrderForm1(data);
+        orderPage.fillOrderFormFirstPage(data);
         orderPage.clickNextButton();
-        orderPage.fillOrderForm2(data);
+        orderPage.fillOrderFormSecondPage(data);
         orderPage.checkClickEndOrderButton();
         //В хроме не кликается кнопка да
     }

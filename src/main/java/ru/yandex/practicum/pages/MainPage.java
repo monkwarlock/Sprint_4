@@ -11,9 +11,6 @@ import ru.yandex.practicum.pages.util.EnvConfig;
 
 
 import java.time.Duration;
-import java.util.List;
-
-
 
 public class MainPage {
     //Конопка Статус заказа
@@ -26,10 +23,17 @@ public class MainPage {
     private final By orderButton = By.cssSelector("Button[class='Button_Button__ra12g']");
     //Кнопка заказать внизу страницы
     private final By bottomOrderButtonIn = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
-    //Список раздела Вопросы о важном
-    private final By listOfImportantQuestions = By.cssSelector(".accordion__item");
     //Кнопка подтверждения куки
     private final By cookieButton = By.cssSelector(".App_CookieButton__3cvqF");
+
+    //Локатор вопроса
+    private By questionLocator(String questionId) {
+        return By.cssSelector(("#" + questionId));
+    }
+    //Локатор ответа
+    private By answerLocator(String answerId) {
+        return By.cssSelector("#" + answerId + " p");
+    }
 
     private final WebDriver driver;
 
@@ -63,26 +67,26 @@ public class MainPage {
         return new OrderPage(driver);
     }
 
-    public void checkClickOnListOfImportantQuestions(){
-        //Находим все элементы по локатору
-        List<WebElement> elements = driver.findElements(listOfImportantQuestions);
-        int totalElements = elements.size();
-        int clickedCount = 0;
-        //Последовательно кликаем по стрелочкам для раскрытия ответа на вопрос
-        for (int i = 0; i < totalElements; i++) {
-            WebElement element = driver.findElements(listOfImportantQuestions).get(i);
-            //Ждём кликабельности и кликаем
-            WebElement clickable = new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.EXPLICITY_TIMEOUT))
-                    .until(ExpectedConditions.elementToBeClickable(element));
-            //Прокручиваем в видимую область
-            ((JavascriptExecutor) driver)
-                    .executeScript("arguments[0].scrollIntoView({block: 'center'});", clickable);
-            assert clickable != null;
-            clickable.click();
-            clickedCount++;
-        }
-        //Проверяем количество прокликаных элементов в блоке
-        Assert.assertEquals("Не все элементы были прокликаны", clickedCount, totalElements);
+    //Нажатие на стрелки возле вопроса в FAQ и проверка, что отобразился соответствующий ответ
+    public void checkClickOnFAQ(EnvConfig data){
+        //Находим вопрос, кликаем на него и проверяем, что текст соответствует ожидаемому
+        WebElement question = driver.findElement(questionLocator(data.questionId));
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView({block: 'center'});", question);
+        new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.EXPLICITY_TIMEOUT))
+                .until(ExpectedConditions.visibilityOfElementLocated(questionLocator(data.questionId)));
+        question.click();
+        String expectedQuestionText = data.questionText;
+        String currentQuestionText = question.getText();
+        Assert.assertEquals("Текст вопроса не соответствует ожидаемому", expectedQuestionText, currentQuestionText);
+
+        //Проверяем, что после раскрытия вопроса, появился соответствующий текст ответа
+        WebElement answer = new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.EXPLICITY_TIMEOUT))
+                .until(ExpectedConditions.elementToBeClickable(answerLocator(data.answerId)));
+        assert answer != null;
+        String expectedAnswerText = data.answerText;
+        String currentAnswerText = answer.getText();
+        Assert.assertEquals("Текст ответа не соответствует ожидаемому", expectedAnswerText, currentAnswerText);
     }
 
     //Нажатие кнопки статус заказа на главной странице

@@ -42,6 +42,14 @@ public class OrderPage {
     private final By yesButton = By.xpath("//button[ contains(@class, 'Button_Button__ra12g') and contains(@class, 'Button_Middle__1CSJM') and text()='Да' ]");
     //Окно заказ оформлен
     private final By orderCompleted = By.xpath("//div[ contains(@class, 'Order_ModalHeader__3FDaJ') and text()='Заказ оформлен' ]");
+    //Локатор станции метро в списке
+    private By metroStationLocator(String metroStation) {
+        return By.xpath(String.format("//button[contains(., '%s')]", metroStation));
+    }
+    //Локатор периода аренды
+    private By rentalPeriodLocator(String rentalPeriod) {
+        return By.xpath(String.format("//div[@class='Dropdown-option' and contains(text(), '%s')]", rentalPeriod));
+    }
 
     private final WebDriver driver;
 
@@ -50,12 +58,12 @@ public class OrderPage {
     }
 
     //Заполнение первой страницы формы заказа
-    public void fillOrderForm1(EnvConfig data) {
+    public void fillOrderFormFirstPage(EnvConfig data) {
         driver.findElement(nameField).sendKeys(data.firstName);
         driver.findElement(lastNameField).sendKeys(data.lastName);
         driver.findElement(addressField).sendKeys(data.address);
         driver.findElement(metroStationField).sendKeys(data.metroStation);
-        driver.findElement(By.xpath(String.format("//button[contains(., '%s')]", data.metroStation))).click();
+        driver.findElement(metroStationLocator(data.metroStation)).click();
         driver.findElement(phoneNumberField).sendKeys(data.phone);
     }
 
@@ -65,10 +73,10 @@ public class OrderPage {
     }
 
     //Заполнение второй страницы формы заказа
-    public void fillOrderForm2 (EnvConfig data) {
+    public void fillOrderFormSecondPage (EnvConfig data) {
         driver.findElement(deliveryDateField).sendKeys(data.deliveryDate, Keys.ENTER);
         driver.findElement(rentalPeriodField).click();
-        driver.findElement(By.xpath(String.format("//div[@class='Dropdown-option' and contains(text(), '%s')]", data.rentalPeriod))).click();
+        driver.findElement(rentalPeriodLocator(data.rentalPeriod)).click();
         driver.findElement(blackPearl).click();
         driver.findElement(commentForCourier).sendKeys(data.comment);
     }
