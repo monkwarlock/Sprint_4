@@ -24,7 +24,7 @@ public class ClickingTheArrowsFAQTest {
 
     @Parameterized.Parameters
     public static Collection<EnvConfig> textData() {
-        return EnvConfig.getQuestionAndAnswerText();
+        return EnvConfig.getContent();
     }
 
     //Выпадающий список в разделе «Вопросы о важном».
@@ -33,9 +33,10 @@ public class ClickingTheArrowsFAQTest {
     public void testClickOnListOfImportantQuestions() {
         WebDriver driver = factory.getDriver();
         var mainPage = new MainPage(driver);
-        //Прокликивание вопросов и проверка, что текст вопроса
-        // и текст ответа соответствует ожидаемому
-        mainPage.checkClickOnFAQ(data);
+        //Находим вопрос и кликаем на него
+        mainPage.clickOnFAQ(data);
+        //Проверяем, что после раскрытия вопроса, появился соответствующий текст ответа
+        mainPage.checkAnswer(data);
         //В последнем вопросе опечатка. Написано "Я жизу ...", должно быть "Я живу ..."
     }
 }

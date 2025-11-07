@@ -25,14 +25,13 @@ public class MainPage {
     private final By bottomOrderButtonIn = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
     //Кнопка подтверждения куки
     private final By cookieButton = By.cssSelector(".App_CookieButton__3cvqF");
-
     //Локатор вопроса
-    private By questionLocator(String questionId) {
-        return By.cssSelector(("#" + questionId));
+    private By questionLocator(String index) {
+        return By.cssSelector(("#accordion__heading-" + index));
     }
     //Локатор ответа
-    private By answerLocator(String answerId) {
-        return By.cssSelector("#" + answerId + " p");
+    private By answerLocator(String index) {
+        return By.cssSelector("#accordion__panel-" + index + " p");
     }
 
     private final WebDriver driver;
@@ -67,24 +66,24 @@ public class MainPage {
         return new OrderPage(driver);
     }
 
-    //Нажатие на стрелки возле вопроса в FAQ и проверка, что отобразился соответствующий ответ
-    public void checkClickOnFAQ(EnvConfig data){
-        //Находим вопрос, кликаем на него и проверяем, что текст соответствует ожидаемому
-        WebElement question = driver.findElement(questionLocator(data.questionId));
+    //Нажатие на стрелки возле вопроса в FAQ
+    public void clickOnFAQ(EnvConfig data) {
+        //Находим вопрос и кликаем на него
+        WebElement question = driver.findElement(questionLocator(data.getIndex()));
         ((JavascriptExecutor) driver)
                 .executeScript("arguments[0].scrollIntoView({block: 'center'});", question);
         new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.EXPLICITY_TIMEOUT))
-                .until(ExpectedConditions.visibilityOfElementLocated(questionLocator(data.questionId)));
+                .until(ExpectedConditions.elementToBeClickable(questionLocator(data.getIndex())));
         question.click();
-        String expectedQuestionText = data.questionText;
-        String currentQuestionText = question.getText();
-        Assert.assertEquals("Текст вопроса не соответствует ожидаемому", expectedQuestionText, currentQuestionText);
+    }
 
+    //Проверка, что отобразился соответствующий ответ
+    public void checkAnswer(EnvConfig data){
         //Проверяем, что после раскрытия вопроса, появился соответствующий текст ответа
         WebElement answer = new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.EXPLICITY_TIMEOUT))
-                .until(ExpectedConditions.elementToBeClickable(answerLocator(data.answerId)));
+                .until(ExpectedConditions.visibilityOfElementLocated(answerLocator(data.getIndex())));
         assert answer != null;
-        String expectedAnswerText = data.answerText;
+        String expectedAnswerText = data.getAnswer();
         String currentAnswerText = answer.getText();
         Assert.assertEquals("Текст ответа не соответствует ожидаемому", expectedAnswerText, currentAnswerText);
     }

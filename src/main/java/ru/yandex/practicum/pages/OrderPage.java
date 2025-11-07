@@ -59,12 +59,12 @@ public class OrderPage {
 
     //Заполнение первой страницы формы заказа
     public void fillOrderFormFirstPage(EnvConfig data) {
-        driver.findElement(nameField).sendKeys(data.firstName);
-        driver.findElement(lastNameField).sendKeys(data.lastName);
-        driver.findElement(addressField).sendKeys(data.address);
-        driver.findElement(metroStationField).sendKeys(data.metroStation);
-        driver.findElement(metroStationLocator(data.metroStation)).click();
-        driver.findElement(phoneNumberField).sendKeys(data.phone);
+        driver.findElement(nameField).sendKeys(data.getFirstName());
+        driver.findElement(lastNameField).sendKeys(data.getLastName());
+        driver.findElement(addressField).sendKeys(data.getAddress());
+        driver.findElement(metroStationField).sendKeys(data.getMetroStation());
+        driver.findElement(metroStationLocator(data.getMetroStation())).click();
+        driver.findElement(phoneNumberField).sendKeys(data.getPhone());
     }
 
     //Нажатие кнопки Далее
@@ -74,11 +74,11 @@ public class OrderPage {
 
     //Заполнение второй страницы формы заказа
     public void fillOrderFormSecondPage (EnvConfig data) {
-        driver.findElement(deliveryDateField).sendKeys(data.deliveryDate, Keys.ENTER);
+        driver.findElement(deliveryDateField).sendKeys(data.getDeliveryDate(), Keys.ENTER);
         driver.findElement(rentalPeriodField).click();
-        driver.findElement(rentalPeriodLocator(data.rentalPeriod)).click();
+        driver.findElement(rentalPeriodLocator(data.getRentalPeriod())).click();
         driver.findElement(blackPearl).click();
-        driver.findElement(commentForCourier).sendKeys(data.comment);
+        driver.findElement(commentForCourier).sendKeys(data.getComment());
     }
 
     //Подтверждение заказа и проверка, что окно подтверждения появляется
